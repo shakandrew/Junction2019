@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import backref, relation
 from sqlalchemy.ext.declarative import declarative_base
 
-Base = declarative_base(name='Model')
+Base = declarative_base()
 
 
 class User(Base):
@@ -33,6 +33,18 @@ class ProductCl(Base):
 
     def __init__(self, name):
         self.name = name
+
+
+class ProductSizes(Base):
+    __tablename__ = 'product_size'
+    product_id = Column('product_id', Integer, ForeignKey('product.id'))
+    smallest_id = Column('smallest_id', Integer, ForeignKey('product.id'))
+    multiplier = Column('multiplier', Integer)
+
+    def __init__(self, product_id, smallest_id, multiplier):
+        self.product_id = product_id
+        self.smallest_id = smallest_id
+        self.multiplier = multiplier
 
 
 class Product(Base):
