@@ -1,3 +1,5 @@
+from sqlalchemy import or_
+
 from controllers.product import ProductController
 from model import Product, ProductSize, Session
 
@@ -28,6 +30,7 @@ class SuggestionController:
                         .query(Product, ProductSize)
                         .filter(ProductSize.smallest_id == product.id)
                         .filter(Product.id == ProductSize.product_id)
+                        .filter(Product.id != product.id)
                         .all())
         bigger_sizes = [
                 (product, ps.multiplier)
@@ -36,7 +39,7 @@ class SuggestionController:
         same_class = (session
                       .query(Product)
                       .filter(Product.product_cl_id == product.product_cl_id)
-                      .filter(Product.product_id != product.product_id)
+                      .filter(Product.id != product.id)
                       .all())
 
         if own_session:

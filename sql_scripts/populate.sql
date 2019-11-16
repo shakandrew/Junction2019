@@ -1,3 +1,5 @@
+TRUNCATE TABLE user;
+TRUNCATE TABLE user_list;
 TRUNCATE TABLE product;
 TRUNCATE TABLE product_cl;
 TRUNCATE TABLE product_size;
