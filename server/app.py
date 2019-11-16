@@ -1,5 +1,5 @@
 import json
-from flask import Flask, abort, request, make_response
+from flask import Flask, request, make_response
 from flask_restful import Api, Resource
 from controllers.challenge import ChallengeController
 from controllers.greenlist import GreenListController
@@ -82,7 +82,7 @@ class ProductSuggestions(Resource):
         result = {
                 'id': product.id,
                 'name': product.name,
-                'picture': 'STUB',
+                'picture': product.image,
                 'footprint': product.footprint,
         }
         if multiple:
