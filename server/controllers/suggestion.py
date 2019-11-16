@@ -2,8 +2,11 @@ from model import Product, ProductSize, Session
 
 
 class SuggestionController:
-    def get_suggestions(self, product):
-        session = Session()
+    def get_suggestions(self, product, session=None):
+        own_session = False
+        if not session:
+            session = Session()
+            own_session = True
 
         bigger_sizes = (self._session
                         .query(Product, ProductSize)
@@ -18,5 +21,6 @@ class SuggestionController:
                       .filter(Product.product_id != product.product_id)
                       .all())
 
-        session.close()
+        if own_session:
+            session.close()
         return bigger_sizes + same_class
