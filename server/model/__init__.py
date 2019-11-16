@@ -1,8 +1,10 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
-from sqlalchemy.orm import backref, relation
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, create_engine
+from sqlalchemy.orm import backref, relation, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-Base = declarative_base(name='Model')
+engine = create_engine('mysql+pymysql://greenlist:green8276pass@localhost:3310/greenlist')
+Session = sessionmaker(bind=engine)
+Base = declarative_base()
 
 
 class User(Base):
@@ -40,10 +42,10 @@ class Product(Base):
     id = Column('id', Integer, primary_key=True)
     name = Column('name', String(45))
     footprint = Column('footprint', Integer)
-    product_cl_id = Column('product_cl_id', Integer, ForeignKey('user.id'))
+    product_cl_id = Column('product_cl_id', Integer, ForeignKey('product_cl.id'))
     image = Column('image', String(255))
 
-    product_cl = relation(ProductCl, backref=backref('snippets', lazy='dynamic'))
+    product_cl = relation(ProductCl, backref=backref('product_cl', lazy='dynamic'))
 
     def __init__(self, name, footprint, product_cl_id, image):
         self.name = name
@@ -55,12 +57,12 @@ class Product(Base):
 class Purchase(Base):
     __tablename__ = 'purchase'
     id = Column('id', Integer, primary_key=True)
-    user_id = Column('name', Integer, ForeignKey('user.id'))
-    product_id = Column('name', Integer, ForeignKey('product.id'))
+    user_id = Column('user_id', Integer, ForeignKey('user.id'))
+    product_id = Column('product_id', Integer, ForeignKey('product.id'))
     quantity = Column('quantity', Integer)
 
-    user = relation(User, backref=backref('snippets', lazy='dynamic'))
-    product = relation(Product, backref=backref('snippets', lazy='dynamic'))
+    user = relation(User, backref=backref('purchase', lazy='dynamic'))
+    product = relation(Product, backref=backref('purchase', lazy='dynamic'))
 
     def __init__(self, user, product, quantity):
         self.user = user
