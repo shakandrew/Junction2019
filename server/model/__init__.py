@@ -67,6 +67,20 @@ class Product(Base):
         self.image = image
 
 
+class UserList(Base):
+    __tablename__ = 'user_list'
+    id = Column('id', Integer, primary_key=True)
+    user_id = Column('user_id', Integer, ForeignKey('user.id'))
+    product_id = Column('product_id', Integer, ForeignKey('product.id'))
+
+    user = relation(User, backref=backref('user_list', lazy='dynamic'))
+    product = relation(Product, backref=backref('user_list', lazy='dynamic'))
+
+    def __init__(self, user, product):
+        self.user = user
+        self.product = product
+
+
 class Purchase(Base):
     __tablename__ = 'purchase'
     id = Column('id', Integer, primary_key=True)
