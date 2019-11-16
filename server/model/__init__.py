@@ -2,8 +2,11 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, create_eng
 from sqlalchemy.orm import backref, relation, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
+<<<<<<< HEAD
 engine = create_engine('mysql+pymysql://greenlist:green8276pass@localhost:3310/greenlist')
 Session = sessionmaker(bind=engine)
+=======
+>>>>>>> 60e18810bbe35dc8ffe7668b4d42478d9459d1de
 Base = declarative_base()
 
 
@@ -35,6 +38,18 @@ class ProductCl(Base):
 
     def __init__(self, name):
         self.name = name
+
+
+class ProductSizes(Base):
+    __tablename__ = 'product_size'
+    product_id = Column('product_id', Integer, ForeignKey('product.id'))
+    smallest_id = Column('smallest_id', Integer, ForeignKey('product.id'))
+    multiplier = Column('multiplier', Integer)
+
+    def __init__(self, product_id, smallest_id, multiplier):
+        self.product_id = product_id
+        self.smallest_id = smallest_id
+        self.multiplier = multiplier
 
 
 class Product(Base):
