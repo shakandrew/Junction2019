@@ -2,11 +2,8 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, create_eng
 from sqlalchemy.orm import backref, relation, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-<<<<<<< HEAD
 engine = create_engine('mysql+pymysql://greenlist:green8276pass@localhost:3310/greenlist')
 Session = sessionmaker(bind=engine)
-=======
->>>>>>> 60e18810bbe35dc8ffe7668b4d42478d9459d1de
 Base = declarative_base()
 
 
