@@ -37,9 +37,10 @@ class ProductCl(Base):
         self.name = name
 
 
-class ProductSizes(Base):
+class ProductSize(Base):
     __tablename__ = 'product_size'
-    product_id = Column('product_id', Integer, ForeignKey('product.id'))
+    product_id = Column('product_id', Integer, ForeignKey('product.id'),
+                        primary_key=True)
     smallest_id = Column('smallest_id', Integer, ForeignKey('product.id'))
     multiplier = Column('multiplier', Integer)
 
