@@ -1,13 +1,15 @@
 import json
-from flask import Flask, request, make_response
+from flask import Flask, abort, request, make_response
 from flask_restful import Api, Resource
 from controllers.challenge import ChallengeController
 from controllers.greenlist import GreenListController
 from controllers.suggestion import SuggestionController
 from controllers.product import ProductController
+from controllers.user import UserController
 from model import Session
 
 app = Flask(__name__)
+
 api = Api(app)
 
 with open('config.json') as json_data_file:
@@ -57,23 +59,21 @@ class ProductSuggestions(Resource):
     def get(self):
         try:
             session = Session()
+            uuid = request.headers["GreenList-User-Id"]
+            user = UserController().get_user_by_id(uuid, session)
+            if not user:
+                abort(401)
             products = (
-                SuggestionController().get_suboptimal_products(session))
+                    SuggestionController().get_suboptimal_products(session))
             result = []
             for product in products:
                 product_json = self.product_to_json(product)
 
-                bigger_sizes, same_class = (
-                    SuggestionController()
-                        .get_suggestions(product, session))
+                suggestions = SuggestionController().get_suggestions(
+                        user, product, session)
 
-                alternatives = []
-                alternatives.extend([
-                    self.product_to_json(product)
-                    for product in same_class])
-                alternatives.extend([
-                    self.product_to_json(product, multiple)
-                    for (product, multiple) in bigger_sizes])
+                alternatives = [self.suggestion_to_json(suggestion)
+                                for suggestion in suggestions]
 
                 product_json.update({'alternatives': alternatives})
                 result.append(product_json)
@@ -83,13 +83,20 @@ class ProductSuggestions(Resource):
 
     def product_to_json(self, product, multiple=None):
         result = {
-            'id': product.id,
-            'name': product.name,
-            'picture': product.image,
-            'footprint': product.footprint,
+                'id': product.id,
+                'name': product.name,
+                'picture': product.image,
+                'footprint': product.footprint,
         }
         if multiple:
             result.update({'multiple': multiple})
+        return result
+
+    def suggestion_to_json(self, suggestion):
+        result = self.product_to_json(suggestion.alternative_product)
+        result.update({'treesDifference': suggestion.trees_difference})
+        if suggestion.multiplier:
+            result.update({'multiple': suggestion.multiplier})
         return result
 
 
