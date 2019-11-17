@@ -9,7 +9,8 @@ class GreenListController:
     def get_list(uuid):
         session = Session()
         resp = []
-        for elem in session.query(UserList).filter(User.greenlist_uuid == uuid).all():
+        user = session.query(User).filter(User.greenlist_uuid == uuid).one_or_none()
+        for elem in session.query(UserList).filter(UserList.user_id == user.id).all():
             resp.append({
                 "productId": elem.product.id,
                 "name": elem.product.name,
