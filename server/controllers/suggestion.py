@@ -1,7 +1,14 @@
 from sqlalchemy import or_
 
-from controllers.product import ProductController
+from controllers.trees import TreesController
 from model import Product, ProductSize, Session
+
+
+class Suggestion:
+    def __init__(self, alternative_product, trees_difference, multiplier=None):
+        self.alternative_product = alternative_product
+        self.trees_difference = trees_difference
+        self.multiplier = multiplier
 
 
 class SuggestionController:
@@ -20,11 +27,13 @@ class SuggestionController:
             session.close()
         return products
 
-    def get_suggestions(self, product, session=None):
+    def get_suggestions(self, user, product, session=None):
         own_session = False
         if not session:
             session = Session()
             own_session = True
+
+        results = []
 
         bigger_sizes = (session
                         .query(Product, ProductSize)
@@ -32,9 +41,15 @@ class SuggestionController:
                         .filter(Product.id == ProductSize.product_id)
                         .filter(Product.id != product.id)
                         .all())
-        bigger_sizes = [
-                (product, ps.multiplier)
-                for (product, ps) in bigger_sizes]
+        for alternative, product_size in bigger_sizes:
+            multiplier = product_size.multiplier
+            trees_difference = (
+                    TreesController().co2_difference_to_trees(
+                        user,
+                        product.footprint * multiplier,
+                        alternative.footprint))
+            suggestion = Suggestion(alternative, trees_difference, multiplier)
+            results.append(suggestion)
 
         same_class = (session
                       .query(Product)
@@ -42,6 +57,13 @@ class SuggestionController:
                       .filter(Product.id != product.id)
                       .all())
 
+        for alternative in same_class:
+            trees_difference = (
+                    TreesController().co2_difference_to_trees(
+                        user, product.footprint, alternative.footprint))
+            suggestion = Suggestion(alternative, trees_difference)
+            results.append(suggestion)
+
         if own_session:
             session.close()
-        return (bigger_sizes, same_class)
+        return results
