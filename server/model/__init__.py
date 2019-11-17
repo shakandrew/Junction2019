@@ -1,5 +1,5 @@
 import json
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, create_engine
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, create_engine, Float
 from sqlalchemy.orm import backref, relation, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -79,7 +79,7 @@ class UserList(Base):
     id = Column('id', Integer, primary_key=True)
     user_id = Column('user_id', Integer, ForeignKey('user.id'))
     product_id = Column('product_id', Integer, ForeignKey('product.id'))
-    trees_difference = Column('trees_difference', Integer)
+    trees_difference = Column('trees_difference', Float)
 
     user = relation(User, backref=backref('user_list', lazy='dynamic'))
     product = relation(Product, backref=backref('user_list', lazy='dynamic'))
