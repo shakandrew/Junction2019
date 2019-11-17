@@ -5,6 +5,7 @@ from controllers.challenge import ChallengeController
 from controllers.greenlist import GreenListController
 from controllers.suggestion import SuggestionController
 from controllers.product import ProductController
+from controllers.purchases import PurchasesController
 from controllers.user import UserController
 from model import Session
 
@@ -104,9 +105,21 @@ class ProductSuggestions(Resource):
 class Purchase(Resource):
     def post(self):
         try:
-            pass
-        except Exception as e:
-            pass
+            req = request.get_json()
+            user_id = req['userId']
+            product_id = req['productId']
+            quantity = req['quantity']
+
+            session = Session()
+
+            user = UserController().get_user_by_id(user_id, session)
+            product = ProductController().get_product(product_id, session)
+
+            PurchasesController().add_purchase(
+                    user, product, quantity, session)
+        finally:
+            session.commit()
+            session.close()
 
 
 api.add_resource(Challenge, '/challenge')
