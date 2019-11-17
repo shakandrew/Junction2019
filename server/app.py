@@ -8,8 +8,11 @@ from controllers.product import ProductController
 from model import Session
 
 app = Flask(__name__)
-
 api = Api(app)
+
+with open('config.json') as json_data_file:
+    config = json.load(json_data_file)
+config = config["server"]
 
 
 class Challenge(Resource):
@@ -55,13 +58,13 @@ class ProductSuggestions(Resource):
         try:
             session = Session()
             products = (
-                    SuggestionController().get_suboptimal_products(session))
+                SuggestionController().get_suboptimal_products(session))
             result = []
             for product in products:
                 product_json = self.product_to_json(product)
 
                 bigger_sizes, same_class = (
-                        SuggestionController()
+                    SuggestionController()
                         .get_suggestions(product, session))
 
                 alternatives = []
@@ -80,10 +83,10 @@ class ProductSuggestions(Resource):
 
     def product_to_json(self, product, multiple=None):
         result = {
-                'id': product.id,
-                'name': product.name,
-                'picture': product.image,
-                'footprint': product.footprint,
+            'id': product.id,
+            'name': product.name,
+            'picture': product.image,
+            'footprint': product.footprint,
         }
         if multiple:
             result.update({'multiple': multiple})
@@ -104,4 +107,4 @@ api.add_resource(ProductSuggestions, '/productSuggestions')
 api.add_resource(Purchase, '/purchases')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host=config["host"], port=config["port"])

@@ -1,8 +1,15 @@
+import json
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, create_engine
 from sqlalchemy.orm import backref, relation, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-engine = create_engine('mysql+pymysql://greenlist:green8276pass@localhost:3310/greenlist')
+with open('config.json') as json_data_file:
+    config = json.load(json_data_file)
+config = config["db"]
+
+# engine = create_engine('mysql+pymysql://greenlist:green8276pass@localhost:3310/greenlist')
+engine = create_engine("{}://{}:{}@{}:{}/{}".format(config["driver"], config["host"], config["username"],
+                                                    config["password"], config["port"], config["name"]))
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
 
