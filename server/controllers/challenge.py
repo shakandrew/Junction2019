@@ -1,4 +1,4 @@
-from model import User, Session
+from model import User, Session, UserList, Purchase
 from datetime import datetime, timedelta
 
 
@@ -15,7 +15,7 @@ class ChallengeController:
         resp = {
             "startTime": str(user.challenge_start_ts),
             "endTime": str(user.challenge_end_ts),
-            "score": user.challenge_score
+            "score": ChallengeController.score_calc(user)
         }
         session.close()
         return resp
@@ -38,3 +38,18 @@ class ChallengeController:
             msg = e
         finally:
             return msg
+
+    @staticmethod
+    def score_calc(user):
+        try:
+            session = Session()
+            score = 0
+            score_product_list = session.query(UserList, Purchase).join(Purchase,
+                                                                        Purchase.product_id == UserList.product_id
+                                                                        ).filter(UserList.user == user).all()
+            for product in score_product_list:
+                score += product[0].trees_difference * product[1].quantity
+            session.close()
+            return score
+        except Exception as e:
+            return e
