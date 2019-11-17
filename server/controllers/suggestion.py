@@ -1,7 +1,7 @@
 from sqlalchemy import or_
 
 from controllers.trees import TreesController
-from model import Product, ProductSize, Session
+from model import Product, ProductSize, Session, UserList
 
 
 class Suggestion:
@@ -33,6 +33,12 @@ class SuggestionController:
             session = Session()
             own_session = True
 
+        already_in_list = (session
+                           .query(UserList)
+                           .filter(UserList.user_id == user.id)
+                           .all())
+        already_in_list = set(p.product_id for p in already_in_list)
+
         results = []
 
         bigger_sizes = (session
@@ -48,8 +54,10 @@ class SuggestionController:
                         user,
                         product.footprint * multiplier,
                         alternative.footprint))
-            suggestion = Suggestion(alternative, trees_difference, multiplier)
-            results.append(suggestion)
+            if alternative.id not in already_in_list:
+                suggestion = Suggestion(
+                        alternative, trees_difference, multiplier)
+                results.append(suggestion)
 
         same_class = (session
                       .query(Product)
@@ -61,8 +69,9 @@ class SuggestionController:
             trees_difference = (
                     TreesController().co2_difference_to_trees(
                         user, product.footprint, alternative.footprint))
-            suggestion = Suggestion(alternative, trees_difference)
-            results.append(suggestion)
+            if alternative.id not in already_in_list:
+                suggestion = Suggestion(alternative, trees_difference)
+                results.append(suggestion)
 
         if own_session:
             session.close()
