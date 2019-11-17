@@ -50,6 +50,6 @@ class ChallengeController:
             for product in score_product_list:
                 score += product[0].trees_difference * product[1].quantity
             session.close()
-            return score
+            return round(score)
         except Exception as e:
             return e
