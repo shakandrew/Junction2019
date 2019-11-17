@@ -46,7 +46,7 @@ class ChallengeController:
             score = 0
             score_product_list = session.query(UserList, Purchase).join(Purchase,
                                                                         Purchase.product_id == UserList.product_id
-                                                                        ).filter(UserList.user == user).all()
+                                                                        ).filter(UserList.user_id == user.id).all()
             for product in score_product_list:
                 score += product[0].trees_difference * product[1].quantity
             session.close()
