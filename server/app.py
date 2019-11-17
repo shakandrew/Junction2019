@@ -49,7 +49,8 @@ class GreenList(Resource):
         try:
             uuid = request.headers["GreenList-User-Id"]
             product_id = request.get_json()["productId"]
-            response = GreenListController.add_to_list(uuid, product_id)
+            trees_difference = request.get_json()["treesDifference"]
+            response = GreenListController.add_to_list(uuid, product_id, trees_difference)
             return make_response(json.dumps(response))
         except Exception as e:
             pass

@@ -20,13 +20,13 @@ class GreenListController:
         return resp
 
     @staticmethod
-    def add_to_list(uuid, product_id):
+    def add_to_list(uuid, product_id, trees_difference):
         msg = "Success"
         try:
             session = Session()
             user = session.query(User).filter(User.greenlist_uuid == uuid).one_or_none()
             product = session.query(Product).filter(Product.id == product_id).one_or_none()
-            product_to_user = UserList(user, product)
+            product_to_user = UserList(user, product, trees_difference)
             session.add(product_to_user)
             session.commit()
             session.close()

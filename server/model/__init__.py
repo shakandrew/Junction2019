@@ -79,13 +79,15 @@ class UserList(Base):
     id = Column('id', Integer, primary_key=True)
     user_id = Column('user_id', Integer, ForeignKey('user.id'))
     product_id = Column('product_id', Integer, ForeignKey('product.id'))
+    trees_difference = Column('trees_difference', Integer)
 
     user = relation(User, backref=backref('user_list', lazy='dynamic'))
     product = relation(Product, backref=backref('user_list', lazy='dynamic'))
 
-    def __init__(self, user, product):
+    def __init__(self, user, product, trees_difference):
         self.user = user
         self.product = product
+        self.trees_difference = trees_difference
 
 
 class Purchase(Base):
