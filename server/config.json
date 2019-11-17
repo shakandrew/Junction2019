@@ -1,14 +1,15 @@
 {
-  "db" : {
-    "driver" : "mysql+pymysql",
-    "username" : "greenlist",
+  "db": {
+    "driver": "mysql+pymysql",
+    "username": "greenlist",
     "password": "green8276pass",
-    "host" : "localhost",
-    "port" : 3306,
-    "name" : "greenlist"
+    "host": "localhost",
+    "port": 3310,
+    "name": "greenlist"
   },
-  "server" : {
-    "host" : "0.0.0.0",
-    "port" : 11026
+  "server": {
+    "host": "0.0.0.0",
+    "port": 11026,
+    "debug": true
   }
 }

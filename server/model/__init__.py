@@ -8,8 +8,8 @@ with open('config.json') as json_data_file:
 config = config["db"]
 
 # engine = create_engine('mysql+pymysql://greenlist:green8276pass@localhost:3310/greenlist')
-engine = create_engine("{}://{}:{}@{}:{}/{}".format(config["driver"], config["host"], config["username"],
-                                                    config["password"], config["port"], config["name"]))
+engine = create_engine("{}://{}:{}@{}:{}/{}".format(config["driver"], config["username"], config["password"],
+                                                    config["host"], config["port"], config["name"]))
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
 

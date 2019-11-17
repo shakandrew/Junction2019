@@ -113,5 +113,6 @@ api.add_resource(GreenList, '/greenList')
 api.add_resource(ProductSuggestions, '/productSuggestions')
 api.add_resource(Purchase, '/purchases')
 
+
 if __name__ == '__main__':
-    app.run(debug=True, host=config["host"], port=config["port"])
+    app.run(debug=config["debug"], host=config["host"], port=config["port"])
