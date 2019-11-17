@@ -26,9 +26,11 @@ class GreenListController:
             session = Session()
             user = session.query(User).filter(User.greenlist_uuid == uuid).one_or_none()
             product = session.query(Product).filter(Product.id == product_id).one_or_none()
-            product_to_user = UserList(user, product, trees_difference)
-            session.add(product_to_user)
-            session.commit()
+            if session.query(UserList).filter(
+                    UserList.user == user and UserList.product == product).one_or_none() is None:
+                product_to_user = UserList(user, product, trees_difference)
+                session.add(product_to_user)
+                session.commit()
             session.close()
         except Exception as e:
             msg = e
